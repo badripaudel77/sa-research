@@ -26,4 +26,75 @@ Consul
 # Docker Hub
 Image : product-service:1.0.0
 Image : stock-service:1.0.0
+
+
+###  TODO
+IAM Role: myResearchECSTaskExecutionRole
+
+Cloudwatch:
+        - 1st log group: /ecs/stock-service
+        - 2nd log group: /ecs/product-service
+
+ECS:
+    Cluster: research-sa-cluster
+    
+    Tasks definitions:
+     1. stock-service
+        image uri: badripaudel77/stock-service:1.0.0
+     2. product-service
+        image uri: badripaudel77/product-service:1.0.0
+
+Target Group (EC2):
+ type : IP
+ port : 8900 (port of stock-service)
+
+ same for product-service
+ type: IP
+ port : 8902
+
+Security group (EC2 > SG):
+ name : alb-sg
+ allow : *
+
+ ECS sg: 
+        - ecs-sg on both port (8900, 8902)
+
+Load balancer:
+      EC2 > ALB
+      Internet facing
+      alg-sg
+      forward to product-tg
+
+
+Add stock path rule on the ALB listener:
+        Open EC2 -> Load Balancers -> sa-alb.
+        Go to Listeners tab.
+        Select HTTP:80 listener.
+        Click View/edit rules.
+        Add rule with:
+        Condition: Path is /api/stock/*
+        Action: Forward to stock-tg
+        Priority: 10
+        Save rules. 
+
+
+
+### Min and max number of tasks
+STOCK_SERVICE_URL = http://YOUR_ALB_DNS
+SPRING_AUTOCONFIGURE_EXCLUDE = org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+SPRING_SQL_INIT_MODE = never
+
+
+
+
+
+
+
+
+
+
+
+
+
         

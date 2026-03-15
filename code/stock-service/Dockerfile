@@ -9,6 +9,8 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 COPY --from=build /app/target/stock-service-1.0.0.jar app.jar
 
 ENV SPRING_CLOUD_CONSUL_HOST=consul-server-1

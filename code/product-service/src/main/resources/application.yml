@@ -1,6 +1,9 @@
 spring:
   application:
     name: product-service
+  autoconfigure:
+    # Keep empty by default; set SPRING_AUTOCONFIGURE_EXCLUDE in ECS to run without DB.
+    exclude: ${SPRING_AUTOCONFIGURE_EXCLUDE:}
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/sa_database}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
@@ -13,7 +16,7 @@ spring:
     defer-datasource-initialization: true
   sql:
     init:
-      mode: always
+      mode: ${SPRING_SQL_INIT_MODE:always}
 
 stock:
   service:
