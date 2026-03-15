@@ -1,0 +1,19 @@
+FROM maven:3.9.9-eclipse-temurin-17 AS build
+WORKDIR /app
+
+COPY pom.xml .
+COPY src ./src
+
+RUN mvn clean package -DskipTests
+
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+
+COPY --from=build /app/target/product-service-1.0.0.jar app.jar
+
+ENV SPRING_CLOUD_CONSUL_HOST=consul-server-1
+ENV SPRING_CLOUD_CONSUL_PORT=8500
+
+EXPOSE 8902
+
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

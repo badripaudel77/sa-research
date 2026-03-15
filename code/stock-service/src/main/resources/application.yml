@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: stock-service
+
+server:
+  port: 8900
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true

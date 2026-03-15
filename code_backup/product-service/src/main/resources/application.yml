@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: product-service
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        serviceName: product-service
+        enabled: true
+        instanceId: ${spring.application.name}-${random.value}
+        healthCheckPath: /actuator/health
+        healthCheckInterval: 15s
+        healthCheckTimeout: 10s
+        preferIpAddress: true
+      config:
+        enabled: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sa_database
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+
+server:
+  port: 8902
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,circuitbreakers
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      stockService:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 3
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 2
+        automaticTransitionFromOpenToHalfOpenEnabled: true
