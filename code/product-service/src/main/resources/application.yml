@@ -3,9 +3,10 @@ spring:
     name: product-service
   autoconfigure:
     # Keep empty by default; set SPRING_AUTOCONFIGURE_EXCLUDE in ECS to run without DB.
-    exclude: ${SPRING_AUTOCONFIGURE_EXCLUDE:}
+    # exclude: ${SPRING_AUTOCONFIGURE_EXCLUDE:}
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/sa_database}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://database-sa.c8x2essweygr.us-east-1.rds.amazonaws.com:5432/sa_database}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
@@ -17,10 +18,24 @@ spring:
   sql:
     init:
       mode: ${SPRING_SQL_INIT_MODE:always}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9094}
+    properties:
+      security.protocol: ${SPRING_KAFKA_PROPERTIES_SECURITY_PROTOCOL:PLAINTEXT}
+      sasl.mechanism: ${SPRING_KAFKA_PROPERTIES_SASL_MECHANISM:}
+      sasl.jaas.config: ${SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG:}
+      sasl.client.callback.handler.class: ${SPRING_KAFKA_PROPERTIES_SASL_CLIENT_CALLBACK_HANDLER_CLASS:}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
 stock:
   service:
     url: ${STOCK_SERVICE_URL:http://localhost:8900}
+
+app:
+  kafka:
+    order-created-topic: ${ORDER_CREATED_TOPIC:product.accessed}
 
 server:
   port: 8902

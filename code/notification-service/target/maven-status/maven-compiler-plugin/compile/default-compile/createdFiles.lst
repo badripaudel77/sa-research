@@ -1,0 +1,4 @@
+com\example\notificationservice\event\OrderCreatedEvent.class
+com\example\notificationservice\messaging\NotificationListener.class
+com\example\notificationservice\NotificationServiceApplication.class
+com\example\notificationservice\config\NotificationProperties.class

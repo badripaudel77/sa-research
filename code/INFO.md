@@ -80,21 +80,23 @@ Add stock path rule on the ALB listener:
 
 
 ### Min and max number of tasks
+
+### Environment Variables
+
+##### sa-alb-1415317104.us-east-1.elb.amazonaws.com
 STOCK_SERVICE_URL = http://YOUR_ALB_DNS
 SPRING_AUTOCONFIGURE_EXCLUDE = org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
 
 SPRING_SQL_INIT_MODE = never
 
+SPRING_DATASOURCE_URL=<DB_URL>
+SPRING_DATASOURCE_USERNAME=<DB_USERNAME>
+SPRING_DATASOURCE_PASSWORD=<DB_PASSWORD>
 
+ALB DNS: sa-alb-1415317104.us-east-1.elb.amazonaws.com
+DB: sa-database.c8x2essweygr.us-east-1.rds.amazonaws.com
 
-
-
-
-
-
-
-
-
+KAFKA_BOOTSTRAP_SERVERS: Needs to change (override)
 
 
         

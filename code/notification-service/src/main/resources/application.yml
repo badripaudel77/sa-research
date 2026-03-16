@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: notification-service
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9094}
+    properties:
+      security.protocol: ${SPRING_KAFKA_PROPERTIES_SECURITY_PROTOCOL:PLAINTEXT}
+      sasl.mechanism: ${SPRING_KAFKA_PROPERTIES_SASL_MECHANISM:}
+      sasl.jaas.config: ${SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG:}
+      sasl.client.callback.handler.class: ${SPRING_KAFKA_PROPERTIES_SASL_CLIENT_CALLBACK_HANDLER_CLASS:}
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP:notification-service}
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: 8082
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4317}
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+
+app:
+  kafka:
+    order-created-topic: ${ORDER_CREATED_TOPIC:product.accessed}
+
+logging:
+  level:
+    root: ERROR

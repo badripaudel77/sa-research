@@ -1,11 +1,16 @@
 package com.example.productservice.controller;
 
 import com.example.productservice.client.StockServiceClient;
+import com.example.productservice.event.OrderCreatedEvent;
+import com.example.productservice.messaging.OrderEventPublisher;
 import com.example.productservice.model.Product;
 import com.example.productservice.repository.ProductRepository;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Instant;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/product")
@@ -13,6 +18,9 @@ public class ProductController {
 
     @Autowired
     private StockServiceClient stockServiceClient;
+
+    @Autowired
+    private OrderEventPublisher orderEventPublisher;
 
     @Autowired(required = false)
     private ProductRepository productRepository;
@@ -30,8 +38,21 @@ public class ProductController {
     public Product getProduct(@PathVariable String productNumber) {
         Product product = findProductForResponse(productNumber);
 
+        // publish an event to Kafka when a product is accessed
+        OrderCreatedEvent event = new OrderCreatedEvent(
+                UUID.randomUUID().toString(),
+                product.getProductNumber(),
+                product.getName(),
+                1,
+                "ACCESSED",
+                UUID.randomUUID().toString(),
+                Instant.now()
+        );
+        orderEventPublisher.publish(event);
+
         var stockResponse = stockServiceClient.getStock(productNumber);
         product.setNumberOnStock(stockResponse.getNumberInStock());
+
         return product;
     }
 
