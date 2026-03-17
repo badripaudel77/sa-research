@@ -48,8 +48,17 @@ public class ProductController {
                 UUID.randomUUID().toString(),
                 Instant.now()
         );
-        orderEventPublisher.publish(event);
 
+        try {
+            orderEventPublisher.publish(event);
+            System.out.println("Event published successfully: " + event);
+        } 
+        catch (Exception e) {
+            System.err.println("Failed to publish event: " + e.getMessage());
+            // return product with error message in case of failure to publish event
+            product.setMessage(e.getMessage());    
+            return product;
+        }
         var stockResponse = stockServiceClient.getStock(productNumber);
         product.setNumberOnStock(stockResponse.getNumberInStock());
 
