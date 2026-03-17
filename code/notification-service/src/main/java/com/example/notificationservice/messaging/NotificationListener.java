@@ -24,7 +24,8 @@ public class NotificationListener {
         try {
             OrderCreatedEvent event = objectMapper.readValue(payload, OrderCreatedEvent.class);
             LOGGER.info("Received event: {}", event);
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             LOGGER.error("Failed to deserialize event payload: {}", payload, e);
         }
     }
