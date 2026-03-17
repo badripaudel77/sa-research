@@ -2,9 +2,8 @@ spring:
   application:
     name: product-service
   autoconfigure:
-    # Keep empty by default; set SPRING_AUTOCONFIGURE_EXCLUDE in ECS to run without DB.
-    # exclude: ${SPRING_AUTOCONFIGURE_EXCLUDE:}
-    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+    exclude: ${SPRING_AUTOCONFIGURE_EXCLUDE:}
+    #exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/sa_database}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
@@ -19,7 +18,7 @@ spring:
     init:
       mode: ${SPRING_SQL_INIT_MODE:always}
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9094}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -45,6 +44,13 @@ management:
       show-details: always
       probes:
         enabled: true
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4317}
 
 resilience4j:
   circuitbreaker:

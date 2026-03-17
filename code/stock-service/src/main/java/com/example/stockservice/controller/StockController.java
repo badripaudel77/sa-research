@@ -1,14 +1,15 @@
 package com.example.stockservice.controller;
 
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/stock")
 public class StockController {
 
-    /**
-     * Returns the number of products in stock for a given product number
-     */
+    Logger logger = LoggerFactory.getLogger(StockController.class);
+    
     @GetMapping("/{productNumber}")
     public StockResponse getStock(@PathVariable String productNumber) {
         // Hard-coded stock values
@@ -20,7 +21,7 @@ public class StockController {
             case "PROD005" -> 150;
             default -> 0;
         };
-
+        logger.info("Returning stock for product {}: {}", productNumber, stock);
         return new StockResponse(productNumber, stock);
     }
 
