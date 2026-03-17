@@ -17,21 +17,20 @@ public class OrderEventPublisher {
     private final ObjectMapper objectMapper;
     private final String orderCreatedTopic;
 
-    public OrderEventPublisher(
-            KafkaTemplate<String, String> kafkaTemplate,
-            ObjectMapper objectMapper,
-            @Value("${app.kafka.order-created-topic}") String orderCreatedTopic
-    ) {
-        this.kafkaTemplate = kafkaTemplate;
-        this.objectMapper = objectMapper;
-        this.orderCreatedTopic = orderCreatedTopic;
+    public OrderEventPublisher(KafkaTemplate<String, String> kafkaTemplate,
+        ObjectMapper objectMapper,
+        @Value("${app.kafka.order-created-topic}") String orderCreatedTopic) {
+                this.kafkaTemplate = kafkaTemplate;
+                this.objectMapper = objectMapper;
+                this.orderCreatedTopic = orderCreatedTopic;
     }
 
     public void publish(OrderCreatedEvent event) {
         try {
             String payload = objectMapper.writeValueAsString(event);
             kafkaTemplate.send(orderCreatedTopic, event.productNumber(), payload);
-        } catch (Exception ex) {
+        } 
+        catch (Exception ex) {
             LOGGER.warn("Failed to publish order event for productNumber={}", event.productNumber(), ex);
         }
     }

@@ -25,14 +25,7 @@ public class ProductController {
     @Autowired(required = false)
     private ProductRepository productRepository;
 
-    /**
-     * Returns a Product given a product number.
-     * Product details are loaded from the 'products' table in PostgreSQL.
-     * Stock information is fetched from stock-service via Feign.
-     * The @CircuitBreaker opens after repeated stock-service failures and
-     * routes to getProductFallback instead.
-     */
-    // private endpoint , any role can access
+    // GET the product details along with stock information.
     @GetMapping("/{productNumber}")
     @CircuitBreaker(name = "stockService", fallbackMethod = "getProductFallback")
     public Product getProduct(@PathVariable String productNumber) {
@@ -55,7 +48,6 @@ public class ProductController {
         } 
         catch (Exception e) {
             System.err.println("Failed to publish event: " + e.getMessage());
-            // return product with error message in case of failure to publish event
             product.setMessage(e.getMessage());    
             return product;
         }
@@ -92,8 +84,7 @@ public class ProductController {
                 .orElse(new Product(productNumber, "Unknown Product", 0));
     }
 
-    // welcome endpoint for testing
-    // public endpoint
+    // Public welcome endpoint
     @GetMapping("")
     public String welcome() {
         return "Welcome to Product Service";
